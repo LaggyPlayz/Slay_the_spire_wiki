@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/slay_the_spire_wiki.iml" filepath="$PROJECT_DIR$/slay_the_spire_wiki.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/slay_the_spire_wiki_android.iml" filepath="$PROJECT_DIR$/android/slay_the_spire_wiki_android.iml" />
+    </modules>
+  </component>
+</project>
