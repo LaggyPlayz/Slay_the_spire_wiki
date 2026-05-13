@@ -30,4 +30,9 @@ class AuthPrefs{
     };
   }
 
+  static Future<String?> getCurrentUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_emailKey);
+  }
+
 }

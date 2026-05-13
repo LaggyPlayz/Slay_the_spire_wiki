@@ -10,9 +10,16 @@ class FavoritesScreen extends StatelessWidget {
 
 
   Future<List<Item>> _getFavoritesFromDB() async {
-    final List<Map<String, dynamic>> maps = await DatabaseHelper.getFavorites();
+    final List<Map<String, dynamic>> maps =
+    await DatabaseHelper.getFavorites();
 
-    return List.generate(maps.length, (i) => Item.fromMap(maps[i]));
+    return List.generate(maps.length, (i) {
+      return Item(
+        id: maps[i]['itemId'],
+        title: maps[i]['title'],
+        imagePath: maps[i]['imagePath'],
+      );
+    });
   }
 
   @override
@@ -106,14 +113,15 @@ class _FavoriteState extends State<Favorite> {
 
   @override
   void dispose() {
-    // Stop listening when the widget is destroyed to save memory
     DatabaseHelper.updateSignal.removeListener(_checkInitialStatus);
     super.dispose();
   }
 
   void _checkInitialStatus() async {
     final favorites = await DatabaseHelper.getFavorites();
-    final isFavorite = favorites.any((map) => map['id'] == widget.element.id);
+    final isFavorite = favorites.any(
+          (map) => map['itemId'] == widget.element.id,
+    );
 
     if (mounted) {
       setState(() {
@@ -127,9 +135,9 @@ class _FavoriteState extends State<Favorite> {
     return IconButton(
       onPressed: () async {
         if (click) {
-          await DatabaseHelper.deleteNews(widget.element.id);
+          await DatabaseHelper.deleteCard(widget.element.id);
         } else {
-          await DatabaseHelper.insertNews(widget.element);
+          await DatabaseHelper.insertCard(widget.element);
         }
       },
       icon: Icon(click ? Icons.favorite : Icons.favorite_border),

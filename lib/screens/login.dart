@@ -17,6 +17,7 @@ class _LogInScreenState extends State<LogInScreen> {
   final passController = TextEditingController();
 
   bool hidePass = true;
+  String? loginError;
 
   @override
   void dispose() {
@@ -27,14 +28,47 @@ class _LogInScreenState extends State<LogInScreen> {
 
   Future<void> onLogIn() async {
     if (!formKey.currentState!.validate()) return;
+
     final email = emailController.text.trim();
     final pass = passController.text;
+
     final user = await AuthPrefs.getUser();
-    if (email == user['email'] && pass == user['password']) {
-      Navigator.pushNamedAndRemoveUntil(
-        context, AppRoutes.home, (route) => false,);
+
+    if (email != user['email'] ||
+        pass != user['password']) {
+
+      setState(() {
+        loginError = "Invalid email or password";
+      });
+
+      formKey.currentState!.validate();
+      return;
     }
+
+    setState(() {
+      loginError = null;
+    });
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.home,
+          (route) => false,
+    );
   }
+
+  // Future<void> onLogIn() async {
+  //   if (!formKey.currentState!.validate()) return;
+  //   final email = emailController.text.trim();
+  //   final pass = passController.text;
+  //   final user = await AuthPrefs.getUser();
+  //   if (email == user['email'] && pass == user['password']) {
+  //     setState(() {
+  //       loginError = "Invalid email or password";
+  //     });
+  //     Navigator.pushNamedAndRemoveUntil(
+  //       context, AppRoutes.home, (route) => false,);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +95,22 @@ class _LogInScreenState extends State<LogInScreen> {
               TextFormField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
+                cursorColor: Color(0xFFc89b3c),
                 decoration: const InputDecoration(
                   labelText: "Email",
+                  floatingLabelStyle: TextStyle(color: Color(0xFFc89b3c)),
                   border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFc89b3c), width: 2),
+                  ),
                 ),
                 validator: (v) {
                   final value = v?.trim() ?? "";
                   if (value.isEmpty) return "Email is required";
                   if (!value.contains("@")) return "Enter a valid email";
+                  if (loginError != null) {
+                    return loginError; // show backend/login error here
+                  }
                   return null;
                 },
               ),
@@ -77,10 +119,15 @@ class _LogInScreenState extends State<LogInScreen> {
               TextFormField(
                 controller: passController,
                 obscureText: hidePass,
+                cursorColor: Color(0xFFc89b3c),
                 decoration: InputDecoration(
                   labelText: "Password",
                   hintText: "Must be 6+ chars",
-                  border: const OutlineInputBorder(),
+                  floatingLabelStyle: TextStyle(color: Color(0xFFc89b3c)),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFc89b3c), width: 2),
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(hidePass ? Icons.visibility_off : Icons.visibility),
                     onPressed: () => setState(() => hidePass = !hidePass),

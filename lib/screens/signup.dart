@@ -77,9 +77,14 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               TextFormField(
                 controller: usernameController,
+                cursorColor: Color(0xFFc89b3c),
                 decoration: const InputDecoration(
                   labelText: "Username",
+                  floatingLabelStyle: TextStyle(color: Color(0xFFc89b3c)),
                   border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFc89b3c), width: 2),
+                  ),
                 ),
                 validator: (v) {
                   final value = v?.trim() ?? "";
@@ -93,9 +98,14 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
+                cursorColor: Color(0xFFc89b3c),
                 decoration: const InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(),
+                    labelText: "Email",
+                    floatingLabelStyle: TextStyle(color: Color(0xFFc89b3c)),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFFc89b3c), width: 2),
+                    ),
                 ),
                 validator: (v) {
                   final value = v?.trim() ?? "";
@@ -110,10 +120,15 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: passController,
                 obscureText: hidePass,
+                cursorColor: Color(0xFFc89b3c),
                 decoration: InputDecoration(
                   labelText: "Password",
                   hintText: "Must be 6+ chars",
+                  floatingLabelStyle: const TextStyle(color: Color(0xFFc89b3c)),
                   border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFc89b3c), width: 2),
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(hidePass ? Icons.visibility_off : Icons.visibility),
                     onPressed: () => setState(() => hidePass = !hidePass),
@@ -131,9 +146,14 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: confirmController,
                 obscureText: hideConfirm,
+                cursorColor: Color(0xFFc89b3c),
                 decoration: InputDecoration(
                   labelText: "Confirm Password",
+                  floatingLabelStyle: const TextStyle(color: Color(0xFFc89b3c)),
                   border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFc89b3c), width: 2),
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(hideConfirm ? Icons.visibility_off : Icons.visibility),
                     onPressed: () => setState(() => hideConfirm = !hideConfirm),

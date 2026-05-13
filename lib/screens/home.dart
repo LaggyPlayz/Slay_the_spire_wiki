@@ -186,7 +186,9 @@ class _FavoriteState extends State<Favorite> {
 
   void _checkInitialStatus() async {
     final favorites = await DatabaseHelper.getFavorites();
-    final isFavorite = favorites.any((map) => map['id'] == widget.element.id);
+    final isFavorite = favorites.any(
+          (map) => map['itemId'] == widget.element.id,
+    );
 
     if (mounted) {
       setState(() {
@@ -200,9 +202,9 @@ class _FavoriteState extends State<Favorite> {
     return IconButton(
       onPressed: () async {
         if (click) {
-          await DatabaseHelper.deleteNews(widget.element.id);
+          await DatabaseHelper.deleteCard(widget.element.id);
         } else {
-          await DatabaseHelper.insertNews(widget.element);
+          await DatabaseHelper.insertCard(widget.element);
         }
       },
       icon: Icon(click ? Icons.favorite : Icons.favorite_border),

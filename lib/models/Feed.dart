@@ -14,7 +14,7 @@ class Feed extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(url, width: 160,),
+            Image.asset(url, height: 160, width: 160,),
             SizedBox(width: 8,),
             Expanded(
               child: Text(
