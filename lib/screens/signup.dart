@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 import '../navigation/AppRoutes.dart';
 import '../models/utiles/shared_pref.dart';
-import '../models/DatabaseHelper.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -42,35 +41,76 @@ class _SignupScreenState extends State<SignupScreen> {
 
     final username = usernameController.text.trim();
     final email = emailController.text.trim();
-    final pass = passController.text;
+    final password = passController.text.trim();
 
-    // Check if email already exists
-    final exists = await DatabaseHelper.emailExists(email);
+    try {
+      // Create Firebase account
+      await authService.value.createAccount(
+        email: email,
+        password: password,
+      );
 
-    if (exists) {
+      // Update display name
+      await authService.value.updateUsername(
+        username: username,
+      );
+
+      // Optional local session
+      await AuthPrefs.setLoggedInUser(
+        email: email,
+        username: authService.value.currentUser?.displayName,
+      );
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Account already exists"),
+          content: Text("Account created successfully"),
         ),
       );
-      return;
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.home,
+            (route) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = "Signup failed";
+
+      switch (e.code) {
+        case 'email-already-in-use':
+          message = "Email already in use";
+          break;
+
+        case 'invalid-email':
+          message = "Invalid email address";
+          break;
+
+        case 'weak-password':
+          message = "Password is too weak";
+          break;
+
+        case 'network-request-failed':
+          message = "No internet connection";
+          break;
+      }
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
     }
-
-    // Save user to SQLite
-    await DatabaseHelper.insertUser(
-      username: username,
-      email: email,
-      password: pass,
-    );
-
-    // Save current session only
-    await AuthPrefs.setLoggedInUser(email);
-
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.home,
-          (route) => false,
-    );
   }
 
   void skipToLogIn() {

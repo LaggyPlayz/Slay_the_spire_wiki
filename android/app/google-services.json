@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "244567319909",
+    "project_id": "slay-the-spire-wiki-e9f46",
+    "storage_bucket": "slay-the-spire-wiki-e9f46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244567319909:android:cdb88f6e6cae7478bb2d8c",
+        "android_client_info": {
+          "package_name": "com.megatown.spire_wiki"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5GKLzzDLtw6znNYEO6zotPg68CPrOQ6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

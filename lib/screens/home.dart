@@ -31,27 +31,102 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
+        drawer: Drawer(
+          backgroundColor: const Color(0xFF1b2230),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color(0xFF12151c),
+                ),
+                child: Text(
+                  "The Spire Wiki",
+                  style: TextStyle(
+                    color: Color(0xFFe6e0d4),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.home, color: Colors.white),
+                title: const Text("Home",
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.person, color: Colors.white),
+                title: const Text(
+                  "Profile",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, AppRoutes.profile);
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.favorite, color: Colors.white),
+                title: const Text("Favorites",
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, AppRoutes.favorites);
+                },
+              ),
+            ],
+          ),
+        ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: Color(0xFF12151c),
+        backgroundColor: const Color(0xFF12151c),
+
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.menu, color: Color(0xFF8e3b46), size: 25, fontWeight: FontWeight(900),),
-            Text(
-                style: TextStyle(color: Color(0xFF8e3b46), fontFamily: 'serif', fontSize: 24, fontWeight: FontWeight(800)),
-                "The Spire Wiki"),
-            InkWell(
-              onTap: (){
+            Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(
+                  Icons.menu,
+                  color: Color(0xFF8e3b46),
+                  size: 25,
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
+            ),
 
-                Navigator.pushNamed(context, AppRoutes.favorites).then((_) {
-                });
+            const Text(
+              "The Spire Wiki",
+              style: TextStyle(
+                color: Color(0xFF8e3b46),
+                fontFamily: 'serif',
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+
+            InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.favorites);
               },
-              child: Icon(Icons.favorite, color: Color(0xFF9aa4b2), size: 25, fontWeight: FontWeight(900),),
+              child: const Icon(
+                Icons.favorite,
+                color: Color(0xFF9aa4b2),
+                size: 25,
+              ),
             ),
           ],
-        ),),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.builder(

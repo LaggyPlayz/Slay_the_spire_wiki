@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 import '../navigation/AppRoutes.dart';
 import '../models/utiles/shared_pref.dart';
-import '../models/DatabaseHelper.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -33,66 +33,68 @@ class _LogInScreenState extends State<LogInScreen> {
     final email = emailController.text.trim();
     final password = passController.text;
 
-    final db = await DatabaseHelper.openMyDatabase();
+    try {
+      // Firebase login
+      await authService.value.signIn(
+        email: email,
+        password: password,
+      );
 
-    final result = await db.query(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
-    );
+      // Save session locally (your existing SharedPref logic)
+      await AuthPrefs.setLoggedInUser(
+        email: email,
+        username: authService.value.currentUser?.displayName,
+      );
 
-    if (result.isEmpty) {
+      if (!mounted) return;
+
       setState(() {
-        loginError = "Invalid email or password";
+        loginError = null;
+      });
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.home,
+            (route) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = "Login failed";
+
+      switch (e.code) {
+        case 'user-not-found':
+          message = "No account found for this email";
+          break;
+        case 'wrong-password':
+          message = "Incorrect password";
+          break;
+        case 'invalid-email':
+          message = "Invalid email address";
+          break;
+        case 'user-disabled':
+          message = "This account has been disabled";
+          break;
+        case 'network-request-failed':
+          message = "No internet connection";
+          break;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        loginError = message;
       });
 
       formKey.currentState!.validate();
-      return;
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        loginError = e.toString();
+      });
+
+      formKey.currentState!.validate();
     }
-
-    // Save current session
-    await AuthPrefs.setLoggedInUser(email);
-
-    setState(() {
-      loginError = null;
-    });
-
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.home,
-          (route) => false,
-    );
   }
-
-  // Future<void> onLogIn() async {
-  //   if (!formKey.currentState!.validate()) return;
-  //
-  //   final email = emailController.text.trim();
-  //   final pass = passController.text;
-  //
-  //   final user = await AuthPrefs.getUser();
-  //
-  //   if (email != user['email'] ||
-  //       pass != user['password']) {
-  //
-  //     setState(() {
-  //       loginError = "Invalid email or password";
-  //     });
-  //
-  //     formKey.currentState!.validate();
-  //     return;
-  //   }
-  //
-  //   setState(() {
-  //     loginError = null;
-  //   });
-  //
-  //   Navigator.pushNamedAndRemoveUntil(
-  //     context,
-  //     AppRoutes.home,
-  //         (route) => false,
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {

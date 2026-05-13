@@ -7,6 +7,7 @@ import 'AppRoutes.dart';
 import '../screens/signup.dart';
 import '../screens/details.dart';
 import '../screens/home.dart';
+import '../screens/profile.dart';
 
 class RouterGenerator {
 
@@ -23,6 +24,8 @@ class RouterGenerator {
       case AppRoutes.details:
        final args = settings.arguments as Item;
        return MaterialPageRoute(builder: (_) => DetailsScreen(item: args));
+      case AppRoutes.profile:
+        return MaterialPageRoute(builder: (_) => ProfileScreen());
        default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(
