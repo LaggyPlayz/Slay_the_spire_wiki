@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../navigation/AppRoutes.dart';
 import '../models/utiles/shared_pref.dart';
+import '../models/DatabaseHelper.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -26,17 +27,21 @@ class _LogInScreenState extends State<LogInScreen> {
     super.dispose();
   }
 
-  Future<void> onLogIn() async {
+  Future<void> onLogin() async {
     if (!formKey.currentState!.validate()) return;
 
     final email = emailController.text.trim();
-    final pass = passController.text;
+    final password = passController.text;
 
-    final user = await AuthPrefs.getUser();
+    final db = await DatabaseHelper.openMyDatabase();
 
-    if (email != user['email'] ||
-        pass != user['password']) {
+    final result = await db.query(
+      'users',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
 
+    if (result.isEmpty) {
       setState(() {
         loginError = "Invalid email or password";
       });
@@ -44,6 +49,9 @@ class _LogInScreenState extends State<LogInScreen> {
       formKey.currentState!.validate();
       return;
     }
+
+    // Save current session
+    await AuthPrefs.setLoggedInUser(email);
 
     setState(() {
       loginError = null;
@@ -58,16 +66,32 @@ class _LogInScreenState extends State<LogInScreen> {
 
   // Future<void> onLogIn() async {
   //   if (!formKey.currentState!.validate()) return;
+  //
   //   final email = emailController.text.trim();
   //   final pass = passController.text;
+  //
   //   final user = await AuthPrefs.getUser();
-  //   if (email == user['email'] && pass == user['password']) {
+  //
+  //   if (email != user['email'] ||
+  //       pass != user['password']) {
+  //
   //     setState(() {
   //       loginError = "Invalid email or password";
   //     });
-  //     Navigator.pushNamedAndRemoveUntil(
-  //       context, AppRoutes.home, (route) => false,);
+  //
+  //     formKey.currentState!.validate();
+  //     return;
   //   }
+  //
+  //   setState(() {
+  //     loginError = null;
+  //   });
+  //
+  //   Navigator.pushNamedAndRemoveUntil(
+  //     context,
+  //     AppRoutes.home,
+  //         (route) => false,
+  //   );
   // }
 
   @override
@@ -109,7 +133,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   if (value.isEmpty) return "Email is required";
                   if (!value.contains("@")) return "Enter a valid email";
                   if (loginError != null) {
-                    return loginError; // show backend/login error here
+                    return loginError;
                   }
                   return null;
                 },
@@ -145,7 +169,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFc89b3c), foregroundColor: Colors.white),
-                  onPressed: onLogIn,
+                  onPressed: onLogin,
                   child: const Text("Log In"),
                 ),
               ),

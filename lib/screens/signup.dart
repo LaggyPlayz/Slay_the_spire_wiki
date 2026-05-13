@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../navigation/AppRoutes.dart';
 import '../models/utiles/shared_pref.dart';
+import '../models/DatabaseHelper.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,7 +23,6 @@ class _SignupScreenState extends State<SignupScreen> {
   bool hidePass = true;
   bool hideConfirm = true;
 
-  String savedEmail = "";
   @override
   void dispose() {
     usernameController.dispose();
@@ -34,23 +35,42 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
     super.initState();
-    loadUser();
-  }
-
-  Future<void> loadUser() async {
-    final user = await AuthPrefs.getUser();
-    setState(() {
-      savedEmail = user["email"] ?? "";
-    });
   }
 
   Future<void> onSignup() async {
     if (!formKey.currentState!.validate()) return;
+
     final username = usernameController.text.trim();
     final email = emailController.text.trim();
     final pass = passController.text;
-    await AuthPrefs.saveUser(username: username, email: email,password: pass);
-    Navigator.pushNamed(context, AppRoutes.login);
+
+    // Check if email already exists
+    final exists = await DatabaseHelper.emailExists(email);
+
+    if (exists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Account already exists"),
+        ),
+      );
+      return;
+    }
+
+    // Save user to SQLite
+    await DatabaseHelper.insertUser(
+      username: username,
+      email: email,
+      password: pass,
+    );
+
+    // Save current session only
+    await AuthPrefs.setLoggedInUser(email);
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.home,
+          (route) => false,
+    );
   }
 
   void skipToLogIn() {
@@ -109,11 +129,17 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 validator: (v) {
                   final value = v?.trim() ?? "";
-                  if (value.isEmpty) return "Email is required";
-                  if (!value.contains("@")) return "Enter a valid email";
-                  if (emailController.text == savedEmail) return "Enter a valid email";
+
+                  if (value.isEmpty) {
+                    return "Email is required";
+                  }
+
+                  if (!value.contains("@")) {
+                    return "Enter a valid email";
+                  }
+
                   return null;
-                }
+                },
               ),
               const SizedBox(height: 12),
 

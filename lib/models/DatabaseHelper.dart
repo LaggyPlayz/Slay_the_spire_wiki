@@ -26,6 +26,12 @@ class DatabaseHelper {
                 'imagePath TEXT, '
                 'userEmail TEXT)'
         );
+        await db.execute(
+            'CREATE TABLE users('
+                'email TEXT PRIMARY KEY, '
+                'username TEXT, '
+                'password TEXT)'
+        );
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -37,43 +43,84 @@ class DatabaseHelper {
     );
   }
 
+  static Future<bool> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    final db = await openMyDatabase();
+
+    final result = await db.query(
+      'users',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
+
+    return result.isNotEmpty;
+  }
+
+  static Future<bool> emailExists(String email) async {
+    final db = await openMyDatabase();
+
+    final result = await db.query(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    return result.isNotEmpty;
+  }
+
+  static Future<void> insertUser({
+    required String username,
+    required String email,
+    required String password,
+  }) async {
+    final db = await openMyDatabase();
+
+    await db.insert(
+      'users',
+      {
+        'username': username,
+        'email': email,
+        'password': password,
+      },
+      conflictAlgorithm: ConflictAlgorithm.abort,
+    );
+  }
+
   // CREATE: Add news
   static Future<void> insertCard(Item item) async {
     final db = await openMyDatabase();
-    final email = await AuthPrefs.getUser();
+    final email = await AuthPrefs.getLoggedInUser();
 
     await db.insert('favorites', {
       'itemId': item.id,
       'title': item.title,
       'imagePath': item.imagePath,
-      'userEmail': email['email'],
+      'userEmail': email,
     });
-
-    triggerUpdate();
   }
 
   static Future<void> deleteCard(int id) async {
     final db = await openMyDatabase();
-    final email = await AuthPrefs.getUser();
+    final email = await AuthPrefs.getLoggedInUser();
 
     await db.delete(
       'favorites',
       where: 'itemId = ? AND userEmail = ?',
-      whereArgs: [id, email['email']],
+      whereArgs: [id, email],
     );
-
-    triggerUpdate();
   }
 
   // READ: Get news
   static Future<List<Map<String, dynamic>>> getFavorites() async {
     final db = await openMyDatabase();
-    final email = await AuthPrefs.getUser();
+    final email = await AuthPrefs.getLoggedInUser();
 
     return db.query(
       'favorites',
       where: 'userEmail = ?',
-      whereArgs: [email['email']],
+      whereArgs: [email],
     );
   }
 }

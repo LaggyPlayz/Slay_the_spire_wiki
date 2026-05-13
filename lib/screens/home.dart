@@ -201,11 +201,21 @@ class _FavoriteState extends State<Favorite> {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        if (click) {
-          await DatabaseHelper.deleteCard(widget.element.id);
-        } else {
+        final newValue = !click;
+
+
+        setState(() {
+          click = newValue;
+        });
+
+
+        if (newValue) {
           await DatabaseHelper.insertCard(widget.element);
+        } else {
+          await DatabaseHelper.deleteCard(widget.element.id);
         }
+
+        DatabaseHelper.triggerUpdate();
       },
       icon: Icon(click ? Icons.favorite : Icons.favorite_border),
       color: click ? Colors.red : Colors.grey,
