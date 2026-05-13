@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/Item.dart';
@@ -141,23 +142,25 @@ class _FavoriteState extends State<Favorite> {
         setState(() {
           click = newValue;
         });
+        final connectivityResult = await Connectivity().checkConnectivity();
+        if (connectivityResult.contains(ConnectivityResult.mobile) ||
+            connectivityResult.contains(ConnectivityResult.wifi)) {
+          try {
+            final db = DatabaseService();
 
-        try {
-          final db = DatabaseService();
+            print("🔥 Writing to Firebase...");
 
-          print("🔥 Writing to Firebase...");
+            await db.toggleFavorite(
+              userId: "data1",
+              itemId: widget.element.id,
+              isFavorite: newValue,
+            );
 
-          await db.toggleFavorite(
-            userId: "data1",
-            itemId: widget.element.id,
-            isFavorite: newValue,
-          );
-
-          print("🔥 Firebase write SUCCESS");
-        } catch (e) {
-          print("❌ Firebase error: $e");
+            print("🔥 Firebase write SUCCESS");
+          } catch (e) {
+            print("❌ Firebase error: $e");
+          }
         }
-
         try {
           if (newValue) {
             await DatabaseHelper.insertCard(widget.element);
