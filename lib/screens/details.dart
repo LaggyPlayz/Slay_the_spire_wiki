@@ -44,7 +44,7 @@ class DetailsScreen extends StatelessWidget {
                   child: const SizedBox(width: 30,),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Text(item.title , style: const TextStyle(fontSize: 24 , fontWeight: FontWeight.bold),),
                 ),
                 Expanded(
