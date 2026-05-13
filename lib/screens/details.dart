@@ -10,15 +10,24 @@ class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Color(0xFF12151c),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF9aa4b2),),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text("Details"),
-      ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+                style: TextStyle(color: Color(0xFF8e3b46), fontFamily: 'serif', fontSize: 24, fontWeight: FontWeight(800)),
+                "Details"),
+          ],),
+        ),
       body: SafeArea(
         child: Column(
           children: [
@@ -27,16 +36,39 @@ class DetailsScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 20,),
-            Stack(
-              alignment: Alignment.bottomRight,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(item.title , style: const TextStyle(fontSize: 24 , fontWeight: FontWeight.bold),),
-                Padding(
-                  padding: const EdgeInsetsGeometry.directional(start: 0,end: 12,top: 12, bottom: 0),
-                  child: Favorite(element: item),
-                )
+                Expanded(
+                  flex: 1,
+                  child: const SizedBox(width: 30,),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(item.title , style: const TextStyle(fontSize: 24 , fontWeight: FontWeight.bold),),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsetsGeometry.directional(start: 0,end: 0,top: 0, bottom: 0),
+                    child: Favorite(element: item),
+                  )
+                ),
               ],
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "Description",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
 
           ],
         ),

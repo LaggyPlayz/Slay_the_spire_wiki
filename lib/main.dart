@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'navigation/AppRoutes.dart';
 import 'navigation/RouterGenerator.dart';
+import '../screens/signup.dart';
 
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: SignupScreen(),
       initialRoute: AppRoutes.signup,
       onGenerateRoute: RouterGenerator.generateRoute,
     );

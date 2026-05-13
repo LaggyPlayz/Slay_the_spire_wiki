@@ -18,22 +18,23 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Color(0xFF12151c),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF9aa4b2),),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          "The Favorite News",
-          style: TextStyle(
-            color: Colors.red,
-            fontFamily: 'serif',
-            fontSize: 24,
-            fontWeight: FontWeight(800),
-          ),
-        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+                style: TextStyle(color: Color(0xFF8e3b46), fontFamily: 'serif', fontSize: 24, fontWeight: FontWeight(800)),
+                "Favorites"),
+          ],),
       ),
       body: FutureBuilder<List<Item>>(
         future: _getFavoritesFromDB(),

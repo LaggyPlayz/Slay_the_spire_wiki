@@ -17,7 +17,7 @@ class RouterGenerator {
       case AppRoutes.login:
         return MaterialPageRoute(builder: (_) => LogInScreen());
       case AppRoutes.home:
-        return MaterialPageRoute(builder: (_) => HomeScreen()); //=> Route
+        return MaterialPageRoute(builder: (_) => HomePage()); //=> Route
       case AppRoutes.favorites:
         return MaterialPageRoute(builder: (_) => FavoritesScreen()); //=> Route
       case AppRoutes.details:

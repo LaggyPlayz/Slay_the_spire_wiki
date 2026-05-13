@@ -60,10 +60,15 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Sign Up"),
-      ),
+        centerTitle: true,
+        backgroundColor: Color(0xFF12151c),
+        title: Text(
+            style: TextStyle(color: Color(0xFF8e3b46), fontFamily: 'serif', fontSize: 24, fontWeight: FontWeight(800)),
+            "Sign Up"),
+        ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -145,7 +150,7 @@ class _SignupScreenState extends State<SignupScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFc89b3c), foregroundColor: Colors.white),
                   onPressed: onSignup,
                   child: const Text("Create Account"),
                 ),
@@ -162,7 +167,10 @@ class _SignupScreenState extends State<SignupScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: skipToLogIn,
-                  child: const Text("Log In"),
+                  child: const Text("Log In",
+                    style: TextStyle(
+                      color: Color(0xFFc89b3c),
+                  ),),
                 ),
               ),
             ],

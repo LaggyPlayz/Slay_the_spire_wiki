@@ -31,15 +31,26 @@ class _LogInScreenState extends State<LogInScreen> {
     final pass = passController.text;
     final user = await AuthPrefs.getUser();
     if (email == user['email'] && pass == user['password']) {
-      Navigator.pushNamed(context, AppRoutes.home);
+      Navigator.pushNamedAndRemoveUntil(
+        context, AppRoutes.home, (route) => false,);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
-        title: const Text("Log In"),
+        backgroundColor: Color(0xFF12151c),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF9aa4b2),),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+            style: TextStyle(color: Color(0xFF8e3b46), fontFamily: 'serif', fontSize: 24, fontWeight: FontWeight(800)),
+            "Log In"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -86,7 +97,7 @@ class _LogInScreenState extends State<LogInScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFc89b3c), foregroundColor: Colors.white),
                   onPressed: onLogIn,
                   child: const Text("Log In"),
                 ),
