@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../services/database_service.dart';
 import '../models/Item.dart';
 import '../models/Feed.dart';
 import '../models/DatabaseHelper.dart';
@@ -134,18 +134,40 @@ class _FavoriteState extends State<Favorite> {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        final newValue = !click;
+        print("🔥 Favorite pressed");
 
+        final newValue = !click;
 
         setState(() {
           click = newValue;
         });
 
+        try {
+          final db = DatabaseService();
 
-        if (newValue) {
-          await DatabaseHelper.insertCard(widget.element);
-        } else {
-          await DatabaseHelper.deleteCard(widget.element.id);
+          print("🔥 Writing to Firebase...");
+
+          await db.toggleFavorite(
+            userId: "data1",
+            itemId: widget.element.id,
+            isFavorite: newValue,
+          );
+
+          print("🔥 Firebase write SUCCESS");
+        } catch (e) {
+          print("❌ Firebase error: $e");
+        }
+
+        try {
+          if (newValue) {
+            await DatabaseHelper.insertCard(widget.element);
+            print("💾 Local insert OK");
+          } else {
+            await DatabaseHelper.deleteCard(widget.element.id);
+            print("🗑️ Local delete OK");
+          }
+        } catch (e) {
+          print("❌ Local DB error: $e");
         }
 
         DatabaseHelper.triggerUpdate();
